@@ -38,6 +38,7 @@ class Hospital(models.Model):
     email                   = models.EmailField()
     help_line               = models.CharField(max_length=17)
     state                   = models.ForeignKey(State, on_delete=models.CASCADE)
+    user                    = models.OneToOneField(User, on_delete=models.CASCADE)
     created_at              = models.DateTimeField(default=timezone.now)
     updated_at              = models.DateTimeField(auto_now=True)
 
@@ -56,19 +57,4 @@ class Hospital(models.Model):
 def _pre_save_receiver(sender, instance, **kwargs):
     if not instance.slug:
         instance.slug = unique_slug_generator_through_name(instance)
-
-
-class HospitalAuthority(models.Model):
-
-    hospital                = models.OneToOneField(Hospital, on_delete=models.CASCADE)
-    user                    = models.OneToOneField(User, on_delete=models.CASCADE)
-    created_at              = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return f'{self.hospital} - {self.user.username}'
-    
-    class Meta:
-        verbose_name = 'Authority'
-        verbose_name_plural = 'Authorities'
-        ordering = ['created_at',]
 

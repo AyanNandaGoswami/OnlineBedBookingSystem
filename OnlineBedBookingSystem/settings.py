@@ -41,6 +41,9 @@ INSTALLED_APPS = [
 
     # local apps
     'hospital',
+
+    # third party apps
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
