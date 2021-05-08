@@ -1,0 +1,61 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.register-container {
+    position: relative;
+    width: 600px;
+    height: 100%;
+    margin: 0 30px;
+    background: #fff;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    border-radius: 7px;
+}
+
+.register-container a {
+    margin-top: 20px;
+    color: dodgerblue;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+#hospital_name, #hospital_id {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#hospital_name_label, #hospital_id_label {
+    margin-left: 10px;
+}
+
+.left-drop-down-cls {
+    width: 100%;
+    height: 40px;
+}
+
+.right-drop-down {
+    width: 100%;
+    height: 40px;
+    padding: 0px !important;
+}
+
+
+#reg-btn {
+    width: 80%;
+    margin: 40px auto 10px auto;
+}
+
+.error-message {
+    color: red;
+    margin-top: 13px;
+}
