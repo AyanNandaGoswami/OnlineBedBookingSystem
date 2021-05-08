@@ -19,14 +19,14 @@
         <div class="register-container">
             <div class="row">
                 {% csrf_token %}
-                <div class="form-floating col-md-12 mt-5">
+                <div class="form-floating col-md-8">
                     <input type="text" class="form-control" id="hospital_name" placeholder="hospital name" required>
                     <label id="hospital_name_label">Hospital Name<span style="color: red">*</span></label>
                     <div class="invalid-feedback" id="hospital_name_err_id">
                     </div>
                 </div>
 
-                <div class="form-floating col-md-12 mt-2">
+                <div class="form-floating col-md-4">
                     <input type="text" class="form-control" id="hospital_id" placeholder="hospital id" required>
                     <label id="hospital_id_label">Hospital ID<span style="color: red">*</span></label>
                     <div class="invalid-feedback" id="hospital_id_err_id">
@@ -50,7 +50,7 @@
                     </select>
                 </div> 
 
-                <div class="form-floating col-md-4 mt-2">
+                <div class="form-floating col-md-8 mt-2">
                     <input type="email" class="form-control" id="email" placeholder="email" required>
                     <label id="email_label">Email<span style="color: red">*</span></label>
                     <div class="invalid-feedback" id="email_err_id">
@@ -64,12 +64,25 @@
                     </div>
                 </div> 
 
+                <div class="form-floating col-md-6 mt-2">
+                    <input type="text" class="form-control" id="user_name" placeholder="user name" required>
+                    <label id="user_name_label">User Name<span style="color: red">*</span></label>
+                    <div class="invalid-feedback" id="user_name_err_id">
+                    </div>
+                </div>
+                <div class="form-floating col-md-6 mt-2">
+                    <input type="password" class="form-control" id="password" placeholder="Password" required>
+                    <label id="password_label">Password<span style="color: red">*</span></label>
+                    <div class="invalid-feedback" id="password_err_id">
+                    </div>
+                </div>
+<!--    
                 <div class="form-floating col-md-4 mt-2">
                     <input type="text" class="form-control" id="help_line" placeholder="help_line" required>
                     <label id="help_line_label">Another Help Line No. (Optional)</label>
                     <div class="invalid-feedback" id="help_line_err_id">
                     </div>
-                </div>
+                </div> -->
 
                                 
                 <div class="col-md-12">
