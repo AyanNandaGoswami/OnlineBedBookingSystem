@@ -8,6 +8,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hospital/', include('hospital.urls', namespace='hospital')),
+    path('customer/', include('customer.urls', namespace='customer')),
+    path('userapp/', include('userapp.urls', namespace='userapp')),
+    path('accounts/', include('allauth.urls'))
 ]
 
 if settings.DEBUG:

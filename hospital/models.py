@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import pre_save
 
 from OnlineBedBookingSystem.custom import *
+from userapp.models import Account
 
 
 class State(models.Model):
@@ -38,12 +38,12 @@ class Hospital(models.Model):
     email                   = models.EmailField()
     help_line               = models.CharField(max_length=17)
     state                   = models.ForeignKey(State, on_delete=models.CASCADE)
-    user                    = models.OneToOneField(User, on_delete=models.CASCADE)
+    user                    = models.OneToOneField(Account(), on_delete=models.CASCADE)
     created_at              = models.DateTimeField(default=timezone.now)
     updated_at              = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.hospital_id
+        return self.name
     
     def get_type(self):
         return self.hospital_type

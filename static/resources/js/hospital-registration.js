@@ -151,15 +151,15 @@ function register() {
             var login_status = false;
             login_status = res['login'];
             if(login_status == true) {
-                // var url = '/profile';
-                // document.location.href = url;
-                console.log('ok');
+                var url = '/hospital/authority-dashboard';
+                document.location.href = url;
             } else {
                 document.getElementById('error-msg').innerHTML = res['username'];
             }
         }
-    }); 
+    });
 }
+
 
 /*function test() {
     

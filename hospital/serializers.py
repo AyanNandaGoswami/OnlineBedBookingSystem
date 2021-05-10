@@ -13,6 +13,18 @@ class HospitalSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['username', 'password']
+         # password will not be render with the user
+        extra_kwargs = {'password': {'write_only': True}}
+    
+    # override create method for password hashing
+    def create(self, validated_data):
+
+        user = User(
+            username= validated_data['username']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 

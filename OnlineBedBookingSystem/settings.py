@@ -38,13 +38,25 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # local apps
     'hospital',
+    'userapp',
+    'customer',
 
     # third party apps
     'rest_framework',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
+
+SITE_ID = 1
+
+# Custom user model
+AUTH_USER_MODEL = 'userapp.Account'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -83,9 +95,18 @@ WSGI_APPLICATION = 'OnlineBedBookingSystem.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': str(BASE_DIR / 'db.sqlite3'),
     }
 }
+
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 
 # Password validation
@@ -119,6 +140,26 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+# Google provider setup
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
+
+# ALLAUTH SETUP
+LOGIN_REDIRECT_URL = '/customer/dashboard'
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS =True
+
 
 
 # Static files (CSS, JavaScript, Images)
