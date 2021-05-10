@@ -33,14 +33,12 @@
                     </div>
                 </div>
 
-                <div class="form-floating col-md-8">
-                    <select name="state" class="left-drop-down-cls mt-2" id="state">
-                        <option value="">Select State<span style="color: red">*</span></option>
-                        {% for state in states %}
-                            <option value="{{state.slug}}">{{state.name}}</option>
-                        {% endfor %}
-                    </select>
-                </div> 
+                <div class="form-floating col-md-8 mt-2">
+                    <input type="text" class="form-control" id="hospital_address" placeholder="hospital address" required>
+                    <label id="hospital_address_label">Hospital Address<span style="color: red">*</span></label>
+                    <div class="invalid-feedback" id="hospital_address_err_id">
+                    </div>
+                </div>
 
                 <div class="form-floating col-md-4">
                     <select name="type" class="right-drop-down mt-2" id="hospital_type">
@@ -48,7 +46,22 @@
                         <option value="government">Government</option>
                         <option value="private">Private</option>
                     </select>
+                    <div class="invalid-feedback" id="hospital_type_err_id"></div>
+                </div>
+
+                <div class="form-floating col-md-8">
+                    <select name="state" class="left-drop-down-cls mt-2" id="state">
+                        <option value="">Select State<span style="color: red">*</span></option>
+                    </select>
+                    <div class="invalid-feedback" id="state_err_id"></div>
                 </div> 
+
+                 <div class="form-floating col-md-4">
+                    <select name="type" class="right-drop-down mt-2" id="city">
+                        <option selected="selected" value="">City</option>
+                    </select>
+                    <div class="invalid-feedback" id="city_err_id"></div>
+                </div>
 
                 <div class="form-floating col-md-8 mt-2">
                     <input type="email" class="form-control" id="email" placeholder="email" required>
@@ -94,4 +107,48 @@
 
     </body>
 </html>
+
+<script>
+    $(document).ready(function(){
+
+    load_json_data('state');
+
+    function load_json_data(id, state)
+    {
+    var html_code = '';
+    $.getJSON("{% static 'json/states2.json' %}", function(data){
+
+    html_code += '<option value="">Select '+id+'</option>';
+    $.each(data, function(key, value){
+        html_code += '<option value="'+value.name+'">'+value.name+'</option>';
+    });
+    $('#state').html(html_code);
+    });
+
+    }
+
+    $('#state').change(function(){
+        var country_id = document.getElementById('state').value;
+        if(country_id != '')
+        {
+            console.log(country_id);
+            console.log("hi");
+            var city_names = '';
+            $.getJSON("{% static 'json/cities.json' %}", function(citydata){
+            $.each(citydata, function(key, value){
+                if(country_id==value.state)
+                {
+                    city_names += '<option value="'+value.id+'">'+value.name+'</option>';
+                }
+            });
+            $('#city').html(city_names);
+            });
+        }
+        else
+        {
+        $('#city').html('<option value="">Select city</option>');
+        }
+    });
+    });
+</script>
 

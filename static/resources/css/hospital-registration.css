@@ -35,7 +35,11 @@ body {
     margin-right: auto;
 }
 
-#hospital_name_label, #hospital_id_label, #user_id_label,#email_label,#help_line_label,#user_name_label,#password_label{
+#hospital_type {
+    height: 58px;
+}
+
+#hospital_name_label, #hospital_id_label, #user_id_label,#email_label,#help_line_label,#user_name_label,#password_label, #hospital_address_label {
     margin-left: 10px;
 }
 
