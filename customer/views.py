@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from userapp.serializers import UserSerializer
+
+from hospital.models import Hospital
 
 
 def logged_in(request):
@@ -34,7 +35,8 @@ class CustomerDashboardView(View):
 
     def get(self, request):
         if logged_in(request):
-            return render(request, self.template_name)
+            hospitals = Hospital.objects.order_by('name').all()
+            return render(request, self.template_name, {'hospitals': hospitals})
         else:
             return redirect('customer:customer_login')
 

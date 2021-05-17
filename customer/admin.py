@@ -4,7 +4,7 @@ from customer.models import Patient
 
 
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ['name', 'adahr', 'status', 'created_at']
+    list_display = ['name', 'adhar', 'status', 'created_at']
     list_display_links = ['name']
     list_filter = ['status']
     list_per_page = 50

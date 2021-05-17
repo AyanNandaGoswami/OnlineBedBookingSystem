@@ -10,6 +10,7 @@
         <title id="page_title">&nbsp;</title>
         <link href="{% static 'vendor/css/styles.css' %}" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+        <link href="{% static 'resources/css/hospital-dashboard.css' %}" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
@@ -27,16 +28,35 @@
             </form>
             <!-- Navbar-->
             <ul class="navbar-nav ml-auto ml-md-0">
+
+                <li>
+                    <div class="icon" id="bell"> <img src="https://i.imgur.com/AC7dgLA.png" alt=""> </div>
+                    <div class="notifications" id="box">
+                        {% for notification in notifications %}
+                            {% if notification.show == True %}
+                                <div id="{{notification.id}}" class="notifications-item">
+                                    <div class="text">
+                                        <p>{{notification.notification_body}}</p>
+                                        <button class="btn btn-primary my-btn" onclick="patient_confirm_or_cancel('confirm', {{notification.id}})">Confirm</button>
+                                        <button class="btn btn-danger my-btn" onclick="patient_confirm_or_cancel('cancel', {{notification.id}})">Cancel</button>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </li>
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="https://i.postimg.cc/BbKp2Y9K/user.png" height="25" width="25" id="profile_name" /></a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                         <a class="dropdown-item" href="#">Your Profile</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="login.html">Logout</a>
+                        <a class="dropdown-item" href="{% url 'hospital:authority_logout' %}">Logout</a>
                     </div>
                 </li>
             </ul>
         </nav>
+        
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
@@ -59,6 +79,42 @@
                                     <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
                                 </nav>
                             </div>
+                            <!-- total bed -->
+                            <div class="sb-sidenav-menu-heading">Total Bed</div>
+                            <div class="total-bed-cls">
+                                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#bed-update-form" aria-expanded="false" aria-controls="collapseLayouts">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                        ICU Beds
+                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                            </div>
+                            <div class="update-bed-parent-cls collapse" id="bed-update-form">
+                                <p id="icu-bed">&nbsp;</p>
+                                <input type="number" name="total-bed" id="icu_bed" placeholder="Number of total beds" /> 
+                                <input type="submit" name="update" value="Update" id="update-btn-icu" class="btn btn-primary" onclick="update_bed('icu_bed')" />
+                            </div>
+
+                            <div class="total-bed-cls">
+                                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#bed-update-form-word" aria-expanded="false" aria-controls="collapseLayouts">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                        Word Beds
+                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                            </div>
+                            
+                            <div class="update-bed-parent-cls collapse" id="bed-update-form-word">
+                                <p id="word-bed">&nbsp;</p>
+                                <input type="number" name="total-bed" id="word_bed" placeholder="Number of total beds" /> 
+                                <input type="submit" name="update" value="Update" id="update-btn-word" class="btn btn-primary" onclick="update_bed('word_bed')" />
+                            </div>
+
+                            
+                            <!-- add patient -->
+                            <div class="sb-sidenav-menu-heading">Action</div>
+                            <div class="add-patient-cls">
+                                <button class="add-patient-btn"><a href="#add-patient-id"><img src="https://i.postimg.cc/fT4s75Vy/add.png" class="plus-png"> Add Patient</a></button>
+                            </div>
+                            
                         </div>
                     </div>
                     <div class="sb-sidenav-footer" id="profile_name_footer">
@@ -73,6 +129,12 @@
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active">Dashboard</li>
                         </ol>
+
+                        <!-- alert message -->
+                        <div class="alert alert-success" role="alert">
+                            &nbsp;
+                        </div>
+
                         <div class="row">
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-primary text-white mb-4" style="cursor: pointer;">
@@ -143,6 +205,60 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="parent-form" id="add-patient-id">
+                        <div class="add-patient-form-cls">
+                            <div class="row">
+                                <h2>Add new patient</h2>
+                                {% csrf_token %}
+
+                                <div class="form-floating col-md-8 mt-2">
+                                    <input type="text" class="form-control" id="patient_name" placeholder="Patient name *" required>
+                                    <div class="invalid-feedback" id="patient_name_err_id">
+                                    </div>
+                                </div>
+
+                                <div class="form-floating col-md-4">
+                                    <select name="type" class="right-drop-down mt-2" id="gender">
+                                        <option selected="selected" value="">Select gender*</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
+                                    <div class="invalid-feedback" id="gender_err_id"></div>
+                                </div>
+
+                                <div class="form-floating col-md-6 mt-2">
+                                    <input type="text" class="form-control" id="p_contact" placeholder="Primary no.*" required>
+                                    <div class="invalid-feedback" id="p_contact_err_id">
+                                    </div>
+                                </div>
+                                <div class="form-floating col-md-6 mt-2">
+                                    <input type="text" class="form-control" id="s_contact" placeholder="Secondary no.(Optional)" required>
+                                    <div class="invalid-feedback" id="s_contact_err_id">
+                                    </div>
+                                </div>
+
+                                <div class="form-floating col-md-7 mt-2">
+                                    <input type="text" class="form-control" id="adhar" placeholder="Adhar no.*" required>
+                                    <div class="invalid-feedback" id="adhar_err_id">
+                                    </div>
+                                </div>
+
+                                <div class="form-floating col-md-5 mt-2">
+                                    <label id="dob_label">Date of birth*<span style="color: red"></span></label>
+                                    <input type="date" class="form-control" id="dob" placeholder="DOB" required>
+                                    <div class="invalid-feedback" id="dob_err_id">
+                                    </div>
+                                    <div class="invalid-feedback" id="gender_err_id"></div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <input type="submit" name="register" value="Add" id="add-btn" class="btn btn-primary" onclick="add_patient()" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </main>
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid">

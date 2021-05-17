@@ -1,6 +1,7 @@
 window.onload = initAll();
 
 function initAll() {
+    build_web_socket();
     set_user_details();
     get_patients('Alive');
 }
@@ -19,7 +20,7 @@ function set_user_details() {
                 document.getElementById('page_title').innerText = res['username'] + ' - Dashboard';
                 document.getElementById('profile_name_footer').innerHTML = "<div class=\"small\">Logged in as:</div>"+res['username']; 
             } else {
-                document.getElementById('profile_name').innerText = res['first_name'] + ' ' + res['last_name'] + ' - Dashboard';
+                document.getElementById('profile_name').innerText = res['first_name'] + ' ' + res['last_name'];
                 document.getElementById('page_title').innerText = res['first_name'] + ' ' + res['last_name'] + '- Dashboard';
                 document.getElementById('profile_name_footer').innerHTML = "<div class=\"small\">Logged in as:</div>" + res['first_name'] + " " + res['last_name'];
             }
@@ -29,6 +30,7 @@ function set_user_details() {
             // } else {
             //     document.getElementById('profile_image').src = res['profile_image_link'];
             // }
+
         }
     });
 }
@@ -51,14 +53,188 @@ function get_patients(slug) {
 
                 for(i=0; i<data.length; i++) {
                     table.row.add( {
-                        [0]:    "<a href=\"" + data[i]['slug'] + "\">" + data[i]['name'] + "</a>",
-                        [1]:    data[i]['adahr'],
+                        [0]:    "<a href=\"get-patient-info/" + data[i]['slug'] + "\">" + data[i]['name'] + "</a>",
+                        [1]:    data[i]['adhar'],
                         [2]:    data[i]['status'],
                         [3]:    new Date(data[i]['created_at'])
                     } ).draw().node();
                 }
+
+                // set bed details
+                document.getElementById('word-bed').innerText = 'Total beds: ' + res['word_bed'];
+                document.getElementById('icu-bed').innerText = 'Total beds: ' + res['icu_bed'];
+                document.getElementById('word_bed').value = res['word_bed'];
+                document.getElementById('icu_bed').value = res['icu_bed'];
             }
         });
     });
 }
+
+function add_patient() {
+    var name = document.getElementById('patient_name').value;
+    var gender = document.getElementById('gender').value;
+    var p_mobile = document.getElementById('p_contact').value;
+    var s_mobile = document.getElementById('s_contact').value;
+    var adhar = document.getElementById('adhar').value;
+    var dob = document.getElementById('dob').value;
+
+    let csrfToken = $("input[name=csrfmiddlewaretoken").val();
+
+    $.ajax({
+        type: 'POST',
+        url: '/customer/add-patient/',
+        data: {
+            'name': name,
+            'gender': gender,
+            'p_mobile': p_mobile,
+            's_mobile': s_mobile,
+            'adhar': adhar,
+            'dob': dob,
+            csrfmiddlewaretoken: csrfToken
+        },
+        dataType: 'json',
+        
+        success: function (res) {
+            var data = res['added'];
+            if (data == true) {
+                get_patients('Alive');  // get updated patient list
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+                document.querySelector('.alert').style.display = 'block';
+                document.querySelector('.alert').innerText = 'Patient added successfully.';
+                clear_form();   // clear form
+                setTimeout(function() {
+                    document.querySelector('.alert').style.display = "none";
+                }, 3000);
+            } else {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+                document.querySelector('.alert').style.display = 'block';
+                document.querySelector('.alert').innerText = 'Can not add patient.';
+                setTimeout(function() {
+                    document.querySelector('.alert').style.display = "none";
+                }, 3000);
+            }
+        }
+    });
+}
+
+function clear_form() {
+    document.getElementById('patient_name').value = "";
+    document.getElementById('gender').value = "";
+    document.getElementById('p_contact').value = "";
+    document.getElementById('s_contact').value = "";
+    document.getElementById('adhar').value = "";
+    document.getElementById('dob').value = "";
+}
+
+
+function update_bed(bed_type) {
+    var bed = document.getElementById(bed_type).value;
+    let csrfToken = $("input[name=csrfmiddlewaretoken").val();
+
+    $.ajax({
+        type: 'POST',
+        url: '/hospital/update-bed/',
+        data: {
+            'bed': bed,
+            'bed_type': bed_type,
+            csrfmiddlewaretoken: csrfToken
+        },
+        dataType: 'json',
+        
+        success: function (res) {
+            // set bed details
+            document.getElementById('word-bed').innerText = 'Total beds: ' + res['word_bed'];
+            document.getElementById('icu-bed').innerText = 'Total beds: ' + res['icu_bed'];
+            document.getElementById('word_bed').value = res['word_bed'];
+            document.getElementById('icu_bed').value = res['icu_bed'];    
+            
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+            document.querySelector('.alert').style.display = 'block';
+            document.querySelector('.alert').innerText = 'Successfully update total number of bed.';
+            setTimeout(function() {
+                document.querySelector('.alert').style.display = "none";
+            }, 3000);
+        }
+    });
+}
+
+
+function build_web_socket() {
+
+    /* connection request */
+    const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/bed-book/'
+    );
+
+    chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+
+        var notification = data['notification'];
+        var id = data['id'];
+
+        var container = document.getElementById('box');
+        var content = "<div id=\"" + id + "\" class=\"notifications-item\"><div class=\"text\"><p>" + notification + "</p><button class=\"btn btn-primary my-btn\" onclick=\"patient_confirm_or_cancel('confirm', " + id + ")\">Confirm</button><button class=\"btn btn-danger my-btn\" onclick=\"patient_confirm_or_cancel('cancel', " + id + ")\">Cancel</button></div></div>";
+
+        container.innerHTML += content;
+    }
+    
+}
+
+function patient_confirm_or_cancel(action, id) {
+    let csrfToken = $("input[name=csrfmiddlewaretoken").val();
+
+    $.ajax({
+        type: 'POST',
+        url: '/bookpatient/add-new-bed/',
+        data: {
+            'action': action,
+            'id': id,
+            csrfmiddlewaretoken: csrfToken
+        },
+        dataType: 'json',
+        
+        success: function (res) {
+            var status = res['status'];
+            if (status == true) {
+                document.getElementById(id).style.display = "none";     // hide clicked notification
+                // get latest patients
+                get_patients('Alive');
+        
+                document.querySelector('.alert').style.display = 'block';
+                document.querySelector('.alert').innerText = res['message'];
+                setTimeout(function() {
+                    document.querySelector('.alert').style.display = "none";
+                }, 3000);
+            }
+        }
+    });
+}
+
+
+$(document).ready(function(){
+
+    var down = false;
+    
+    $('#bell').click(function(e){
+    
+       var color = $(this).text();
+        if(down){
+    
+            $('#box').css('height','0px');
+            $('#box').css('opacity','0');
+            down = false;
+        }else{
+    
+            $('#box').css('height','auto');
+            $('#box').css('opacity','1');
+            down = true;
+        }
+    })
+})
+
 

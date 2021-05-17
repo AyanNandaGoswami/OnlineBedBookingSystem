@@ -27,7 +27,8 @@ class Patient(models.Model):
                                             ('Dead', 'Dead')
                                         )
     status                          = models.CharField(max_length=20, choices=STATUS_CHOICE, default='Alive')
-    adahr                           = models.CharField(max_length=50, unique=True, primary_key=True)
+    adhar                           = models.CharField(max_length=50, unique=True)
+    dob                             = models.DateField()
     created_at                      = models.DateTimeField(default=timezone.now)
     update_at                       = models.DateTimeField(auto_now=True)
 

@@ -20,3 +20,15 @@ def unique_slug_generator_through_name(instance, new_slug=None):
     return slug
 
 
+def unique_room_genarator(instance):
+    id = ''
+    klass = instance.__class__
+    while True:
+        id = random_string_generator()
+
+        if klass.objects.filter(unique_room_id=id).exists():
+            continue
+        else:
+            break
+    
+    return id

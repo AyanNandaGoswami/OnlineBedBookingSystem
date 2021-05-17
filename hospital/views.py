@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from .models import *
+from bookpatient.models import Notification
 
 
 def logged_in(request):
@@ -17,11 +18,17 @@ class HospitalRegistrationView(View):
     template_name = 'hospital/hospital-registration.html'
 
     def get(self, request):
-        states = State.objects.order_by('name').all()
-        context = {
-            'states': states 
-        }
-        return render(request, self.template_name, context)
+        return render(request, self.template_name)
+
+
+class HospitalLoginView(View):
+    template_name = 'hospital/hospital-authority-login.html'
+
+    def get(self, request):
+        if logged_in(request):
+            return redirect('hospital:dashboard')
+        else:
+            return render(request, self.template_name)
 
 
 class HospitalDashboardView(View):
@@ -29,9 +36,11 @@ class HospitalDashboardView(View):
     
     def get(self, request):
         if logged_in(request):
-            return render(request, self.template_name)
+            hospitals = Hospital.objects.order_by('name').all()
+            notifications = Notification.objects.order_by('-timestamp').all()
+            return render(request, self.template_name, {'hospitals': hospitals, 'notifications': notifications})
         else:
-            return redirect('hospital:registration')
+            return redirect('hospital:login')
 
 
 

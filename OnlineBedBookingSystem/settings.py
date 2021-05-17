@@ -44,9 +44,11 @@ INSTALLED_APPS = [
     'hospital',
     'userapp',
     'customer',
+    'bookpatient',
 
     # third party apps
     'rest_framework',
+    'channels',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -73,7 +75,7 @@ ROOT_URLCONF = 'OnlineBedBookingSystem.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -88,6 +90,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'OnlineBedBookingSystem.wsgi.application'
 
+ASGI_APPLICATION = 'OnlineBedBookingSystem.routing.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -152,6 +155,13 @@ SOCIALACCOUNT_PROVIDERS = {
         'AUTH_PARAMS': {
             'access_type': 'online',
         }
+    }
+}
+
+# CHANNEL LAYER SETUP
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": 'channels.layers.InMemoryChannelLayer'
     }
 }
 

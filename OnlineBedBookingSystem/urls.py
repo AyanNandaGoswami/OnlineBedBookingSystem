@@ -10,6 +10,7 @@ urlpatterns = [
     path('hospital/', include('hospital.urls', namespace='hospital')),
     path('customer/', include('customer.urls', namespace='customer')),
     path('userapp/', include('userapp.urls', namespace='userapp')),
+    path('bookpatient/', include('bookpatient.urls', namespace='bookpatient')),
     path('accounts/', include('allauth.urls'))
 ]
 

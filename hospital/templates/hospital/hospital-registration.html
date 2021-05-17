@@ -18,6 +18,7 @@
     
         <div class="register-container">
             <div class="row">
+                <h2>Register Hospital</h2>
                 {% csrf_token %}
                 <div class="form-floating col-md-8">
                     <input type="text" class="form-control" id="hospital_name" placeholder="hospital name" required>
@@ -34,7 +35,7 @@
                 </div>
 
                 <div class="form-floating col-md-8 mt-2">
-                    <input type="text" class="form-control" id="hospital_address" placeholder="hospital address" required>
+                    <input type="text" class="form-control" id="address" placeholder="hospital address" required>
                     <label id="hospital_address_label">Hospital Address<span style="color: red">*</span></label>
                     <div class="invalid-feedback" id="hospital_address_err_id">
                     </div>
@@ -58,7 +59,7 @@
 
                  <div class="form-floating col-md-4">
                     <select name="type" class="right-drop-down mt-2" id="city">
-                        <option selected="selected" value="">City</option>
+                        <option selected="selected" value="" id="city_label">City</option>
                     </select>
                     <div class="invalid-feedback" id="city_err_id"></div>
                 </div>
@@ -94,7 +95,7 @@
                     <input type="submit" name="register" value="Register" id="reg-btn" class="btn btn-primary" />
                 </div>
                 <br>
-                <p>Already have an account? <a href="">Login here</a></p>
+                <p>Already registered? <a href="{% url 'hospital:login' %}">Login here</a></p>
                 <p class="error-message" id="error-msg">&nbsp;</p>
             <div>
         </div>
@@ -131,8 +132,6 @@
         var country_id = document.getElementById('state').value;
         if(country_id != '')
         {
-            console.log(country_id);
-            console.log("hi");
             var city_names = '';
             $.getJSON("{% static 'json/cities.json' %}", function(citydata){
             $.each(citydata, function(key, value){
