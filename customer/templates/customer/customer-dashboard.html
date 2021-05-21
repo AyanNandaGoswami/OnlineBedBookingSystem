@@ -22,9 +22,9 @@
             <!-- Navbar Search-->
             <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
                 <div class="input-group">
-                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
+                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" id="search-field" />
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
+                        <button class="btn btn-primary" type="button"  data-toggle="modal" data-target="#myModal" onclick="search_hospitals()"><i class="fas fa-search"></i></button>
                     </div>
                 </div>
             </form>
@@ -40,33 +40,39 @@
                 </li>
             </ul>
         </nav>
-        
+
+          <!-- Modal -->
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <!-- <h4 class="modal-title">Modal Header</h4> -->
+                    </div>
+                    <div class="modal-body" id="model-id">
+                        <div class="content">
+                            <p id="name-id"><a href="">&nbsp;</a></p>
+                            <p id="address-id">&nbsp;</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Modal -->
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">Core</div>
-                            <a class="nav-link" href="index.html">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Dashboard
+                            <a class="nav-link" href="{% url 'index' %}">
+                                <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
+                                Home
                             </a>
-                            <div class="sb-sidenav-menu-heading">Interface</div>
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Layouts
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="layout-static.html">Static Navigation</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
-                                </nav>
-                            </div>
-                            <div class="sb-sidenav-menu-heading">Action</div>
-                            <div class="add-patient-cls">
-                                <button class="add-patient-btn"><a href="#add-patient-id"><img src="https://i.postimg.cc/fT4s75Vy/add.png" class="plus-png"> Add Patient</a></button>
-                            </div>
                         </div>
                     </div>
                     <div class="sb-sidenav-footer" id="profile_name_footer">
@@ -157,81 +163,7 @@
                         </div>
                     </div>                   
                     
-                    <div class="parent-form" id="add-patient-id">
-                        <div class="add-patient-form-cls">
-                            <div class="row">
-                                <h2>Add new patient</h2>
-                                {% csrf_token %}
-                                <div class="form-floating col-md-12">
-                                    <select name="type" class="right-drop-down mt-2" id="hospital_name">
-                                        <option selected="selected" value="">Select hospital</option>
-                                        {% for hospital in hospitals %}
-                                            <option value="{{hospital.slug}}">{{hospital.name}}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <div class="invalid-feedback" id="hospital_id_err_id">
-                                    </div>
-                                </div>
-
-                                <div class="form-floating col-md-8 mt-2">
-                                    <input type="text" class="form-control" id="patient_name" placeholder="Patient name *" required>
-                                    <div class="invalid-feedback" id="patient_name_err_id">
-                                    </div>
-                                </div>
-
-                                <div class="form-floating col-md-4">
-                                    <select name="type" class="right-drop-down mt-2" id="gender">
-                                        <option selected="selected" value="">Select gender</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                    </select>
-                                    <div class="invalid-feedback" id="gender_err_id"></div>
-                                </div>
-
-                                <div class="form-floating col-md-6 mt-2">
-                                    <input type="text" class="form-control" id="p_contact" placeholder="Primary no." required>
-                                    <div class="invalid-feedback" id="p_contact_err_id">
-                                    </div>
-                                </div>
-                                <div class="form-floating col-md-6 mt-2">
-                                    <input type="text" class="form-control" id="s_contact" placeholder="Secondary no." required>
-                                    <div class="invalid-feedback" id="s_contact_err_id">
-                                    </div>
-                                </div>
-
-                                <div class="form-floating col-md-7 mt-2">
-                                    <input type="text" class="form-control" id="adhar" placeholder="Adhar no." required>
-                                    <div class="invalid-feedback" id="adhar_err_id">
-                                    </div>
-                                </div>
-
-                                <div class="form-floating col-md-5 mt-2">
-                                    <label id="dob_label">Date of birth<span style="color: red">*</span></label>
-                                    <input type="date" class="form-control" id="dob" placeholder="DOB" required>
-                                    <div class="invalid-feedback" id="dob_err_id">
-                                    </div>
-                                    <div class="invalid-feedback" id="gender_err_id"></div>
-                                </div>
-
-                                <div class="col-md-12">
-                                    <input type="submit" name="register" value="Add" id="add-btn" class="btn btn-primary" onclick="add_patient()" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </main>
-                <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2020</div>
-                            <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
             </div>
         </div>
         <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>

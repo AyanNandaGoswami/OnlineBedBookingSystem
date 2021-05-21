@@ -48,6 +48,11 @@ class TempPatientDetails(models.Model):
     status                          = models.CharField(max_length=20, choices=STATUS_CHOICE, default='Alive')
     adhar                           = models.CharField(max_length=50, unique=True)
     dob                             = models.DateField()
+    BED_CHOICE                      = (
+                                            ('word', 'Word'),
+                                            ('icu', 'ICU')
+                                        )
+    bed                             = models.CharField(max_length=20, choices=BED_CHOICE, default='Word')
     created_at                      = models.DateTimeField(default=timezone.now)
     update_at                       = models.DateTimeField(auto_now=True)
 
@@ -61,7 +66,7 @@ def _post_save_receiver(sender, instance, **kwargs):
     # create new booking_request obj
     booking_request_obj = BookingRequest.objects.create(
         from_user = instance.reference_user,
-        bed_type = 'ICU',
+        bed_type = instance.bed,
         adhar = instance.adhar
     )
 
@@ -114,7 +119,7 @@ def _pre_save_receiver(sender, instance, **kwargs):
 
 class Notification(models.Model):
     notification_body               = models.TextField(blank=True, null=True)
-    hospital_id                     = models.CharField(max_length=255)
+    hospital_id                     = models.CharField(max_length=255, blank=True, null=True)
     booking_request                 = models.ForeignKey(BookingRequest, on_delete=models.CASCADE, blank=True, null=True)
     show                            = models.BooleanField(default=True)
     timestamp                       = models.DateTimeField(default=timezone.now)
@@ -139,7 +144,7 @@ def _post_save_receiver(sender, created, instance, **kwargs):
                 'id': str(instance.pk)
             }
         )
-
+        
 
 class Activity(models.Model):
     user                             = models.ForeignKey(Account, on_delete=models.CASCADE)

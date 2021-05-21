@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from hospital.models import Hospital
+from bookpatient.models import Notification
 
 
 def logged_in(request):
@@ -35,8 +36,7 @@ class CustomerDashboardView(View):
 
     def get(self, request):
         if logged_in(request):
-            hospitals = Hospital.objects.order_by('name').all()
-            return render(request, self.template_name, {'hospitals': hospitals})
+            return render(request, self.template_name)
         else:
             return redirect('customer:customer_login')
 

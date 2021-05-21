@@ -4,6 +4,7 @@ function initAll() {
     build_web_socket();
     set_user_details();
     get_patients('Alive');
+    get_bed_etails();
 }
 
 
@@ -70,6 +71,49 @@ function get_patients(slug) {
     });
 }
 
+function get_bed_etails() {
+
+    var hospital_slug = JSON.parse(document.getElementById('hospital_slug').textContent);
+    var url = "/hospital/bed-details/" + hospital_slug;
+
+    $.ajax({
+        type: 'GET',
+        url: url,
+        dataType: 'json',
+        
+        success: function (res) {
+            document.getElementById('available-word-bed').innerText = res['available_word_bed'] - res['waiting_word_bed'];
+            document.getElementById('waiting-word-bed').innerText = res['waiting_word_bed'];
+
+            document.getElementById('available-icu-bed').innerText = res['available_icu_bed'] - res['waiting_icu_bed'];
+            document.getElementById('waiting-icu-bed').innerText = res['waiting_icu_bed'];
+
+            disable_or_enable_bed_type(res);
+        }
+    });
+}
+
+function disable_or_enable_bed_type(res) {
+    var word_available = res['available_word_bed'] - res['waiting_word_bed'];
+    var icu_availbale = res['available_icu_bed'] - res['waiting_icu_bed'];
+
+    if (word_available < 1) {
+        document.getElementById('bed').value = 'icu';
+        document.getElementById('bed').disabled = true;
+    } 
+
+    if (icu_availbale < 1) {
+        document.getElementById('bed').value = 'word';
+        document.getElementById('bed').disabled = true;
+    }
+
+    if (icu_availbale < 1 && word_available < 1) {
+        document.getElementById('open-model-btn').disabled = true;
+    }
+
+}
+
+
 function add_patient() {
     var name = document.getElementById('patient_name').value;
     var gender = document.getElementById('gender').value;
@@ -77,12 +121,13 @@ function add_patient() {
     var s_mobile = document.getElementById('s_contact').value;
     var adhar = document.getElementById('adhar').value;
     var dob = document.getElementById('dob').value;
+    var bed = document.getElementById('bed').value;
 
     let csrfToken = $("input[name=csrfmiddlewaretoken").val();
 
     $.ajax({
         type: 'POST',
-        url: '/customer/add-patient/',
+        url: '/hospital/add-patient/',
         data: {
             'name': name,
             'gender': gender,
@@ -90,6 +135,7 @@ function add_patient() {
             's_mobile': s_mobile,
             'adhar': adhar,
             'dob': dob,
+            'bed': bed,
             csrfmiddlewaretoken: csrfToken
         },
         dataType: 'json',
@@ -148,7 +194,10 @@ function update_bed(bed_type) {
             document.getElementById('word-bed').innerText = 'Total beds: ' + res['word_bed'];
             document.getElementById('icu-bed').innerText = 'Total beds: ' + res['icu_bed'];
             document.getElementById('word_bed').value = res['word_bed'];
-            document.getElementById('icu_bed').value = res['icu_bed'];    
+            document.getElementById('icu_bed').value = res['icu_bed'];  
+            
+            // update bed details
+            get_bed_etails();
             
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;

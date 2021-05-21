@@ -1,6 +1,8 @@
 import random2
 import string
 from django.utils.text import slugify
+from django.core.mail import send_mail
+from .settings import EMAIL_HOST_USER
 
 
 def random_string_generator(size=10, chars=string.ascii_lowercase + string.digits):
@@ -32,3 +34,21 @@ def unique_room_genarator(instance):
             break
     
     return id
+
+
+
+def send_mail_to_customer(subject, message, email):
+    mail_subject = subject
+    mail_message = message
+    to_email = [email]
+    from_email_username = 'BookYourBed <{}>'.format(EMAIL_HOST_USER)
+
+    send_mail(
+        subject=mail_subject,
+        message=mail_message,
+        from_email=from_email_username,
+        recipient_list=to_email,
+        fail_silently=False
+    )
+
+

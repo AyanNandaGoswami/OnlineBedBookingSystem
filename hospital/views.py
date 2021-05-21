@@ -35,14 +35,36 @@ class HospitalDashboardView(View):
     template_name = 'hospital/hospital-dashboard.html'
     
     def get(self, request):
+        user = request.user
+
         if logged_in(request):
-            hospitals = Hospital.objects.order_by('name').all()
-            notifications = Notification.objects.order_by('-timestamp').all()
-            return render(request, self.template_name, {'hospitals': hospitals, 'notifications': notifications})
+            hospital = Hospital.objects.get(user=user.pk)
+            notifications = Notification.objects.order_by('-timestamp').filter(hospital_id__iexact=hospital.hospital_id)
+            return render(request, self.template_name, {'hospital': hospital, 'notifications': notifications})
         else:
             return redirect('hospital:login')
 
 
+class HospitalDetailView(View):
+    template_name = 'hospital/inner-hospital.html'
+    page_not_found = 'page-not-found.html'
 
+    def get_object(self, slug):
+        try:
+            hospital = Hospital.objects.get(slug=slug)
+            return hospital
+        except:
+            return None    
+
+    def get(self, request, slug):
+
+        if self.get_object(slug) != None:
+            hospital = self.get_object(slug)
+            
+            return render(request, self.template_name, {
+                'hospital': hospital,
+            })
+        else:
+            return render(request, self.page_not_found, {'info': 'Invalid hospital slug'})
 
 

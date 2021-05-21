@@ -4,6 +4,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from home.views import IndexView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -11,7 +13,8 @@ urlpatterns = [
     path('customer/', include('customer.urls', namespace='customer')),
     path('userapp/', include('userapp.urls', namespace='userapp')),
     path('bookpatient/', include('bookpatient.urls', namespace='bookpatient')),
-    path('accounts/', include('allauth.urls'))
+    path('accounts/', include('allauth.urls')),
+    path('', IndexView.as_view(), name='index'),
 ]
 
 if settings.DEBUG:

@@ -10,6 +10,7 @@ from customer.models import *
 from customer.serializers import *
 from .serializers import *
 from userapp.serializers import AccountRegisterSerializer
+from bookpatient.models import *
 
 
 class CreateHospital(GenericAPIView):
@@ -113,18 +114,69 @@ class UpdateBedAPI(GenericAPIView):
 
 
 class PatientDetailView(GenericAPIView):
-    template_name = 'customer/patient-view.html'
+    patient_view_for_hospital = 'hospital/patient-view.html'
     page_not_found = 'page-not-found.html'
+    patient_view_for_customer = 'customer/patient-view.html'
 
     def get(self, request, slug):
-        try:
-            patient_obj = Patient.objects.get(slug=slug)
-            patient_serialized_data = PatientSerializer(patient_obj, many=False)
-            return render(request, self.template_name, {'patient': patient_serialized_data.data})
-        except:
-            return render(request, self.page_not_found, {'info': 'Patient not found.'})
+        
+        user = request.user
+
+        if user.is_authenticated and user.is_customer:
+            try:
+                patient_obj = Patient.objects.get(slug=slug, reference_user=user.pk)
+                patient_serialized_data = PatientSerializer(patient_obj, many=False)
+                return render(request, self.patient_view_for_customer, {'patient': patient_serialized_data.data})
+            except:
+                return render(request, self.page_not_found, {'info': 'Patient not found.'})
+        
+        elif user.is_authenticated and user.is_authority:
+            hospital = Hospital.objects.get(user=user.pk)
+            try:
+                patient_obj = Patient.objects.get(slug=slug, hospital=hospital.pk)
+                patient_serialized_data = PatientSerializer(patient_obj, many=False)
+                return render(request, self.patient_view_for_hospital, {'patient': patient_serialized_data.data})
+            except:
+                return render(request, self.page_not_found, {'info': 'Patient not found.'})
 
 
 
+class AddPatientAPI(GenericAPIView):
+
+    def post(self, request):
+        data = request.data
+        user = request.user
+    
+        hospital = Hospital.objects.get(user=user)
+        patient = Patient.objects.create(reference_user=user, hospital=hospital, name=data['name'], gender=data['gender'], p_mobile=data['p_mobile'], s_mobile=data['s_mobile'], adhar=data['adhar'], dob=data['dob'], bed=data['bed'])
+        if patient:
+            text = f'You ({user.username}) added a new patient {data["name"]}.'
+            Activity.objects.create(user=user, text=text)
+            return Response({'added': True})
+        return Response({'added': False})
+        
+
+
+class HospitalBedDetalAPI(GenericAPIView):
+
+    def get(self, request, slug):
+        hospital = Hospital.objects.get(slug=slug)
+
+        patient_word_bed = Patient.objects.filter(Q(hospital=hospital.pk) & Q(bed='word')).count()
+        patient_icu_bed = Patient.objects.filter(Q(hospital=hospital.pk) & Q(bed='icu')).count()
+
+        temp_patient_word_bed = TempPatientDetails.objects.filter(Q(hospital=hospital.pk) & Q(bed='word')).count()
+        temp_patient_icu_bed = TempPatientDetails.objects.filter(Q(hospital=hospital.pk) & Q(bed='icu')).count()
+
+        availabel_word_bed = hospital.word_bed - patient_word_bed
+        availabel_icu_bed = hospital.icu_bed - patient_icu_bed
+
+        data = {
+            'available_word_bed': availabel_word_bed,
+            'available_icu_bed': availabel_icu_bed,
+            'waiting_word_bed': temp_patient_word_bed,
+            'waiting_icu_bed': temp_patient_icu_bed
+        }
+        return Response(data)
 
 

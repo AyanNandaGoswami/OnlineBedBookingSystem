@@ -63,22 +63,11 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">Core</div>
-                            <a class="nav-link" href="index.html">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Dashboard
+                            <a class="nav-link" href="{% url 'index' %}">
+                                <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
+                                Home
                             </a>
-                            <div class="sb-sidenav-menu-heading">Interface</div>
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Layouts
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="layout-static.html">Static Navigation</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
-                                </nav>
-                            </div>
+                            
                             <!-- total bed -->
                             <div class="sb-sidenav-menu-heading">Total Bed</div>
                             <div class="total-bed-cls">
@@ -206,6 +195,39 @@
                         </div>
                     </div>
 
+                    
+                    <h1 class="bed-details-header">Updated bed details</h1>
+                    <div class="beds d-flex flex-row justify-content-center">
+                        
+                        <div class="word-bed">
+                            <h4>word beds</h4>
+                            <div class="parent-inner d-flex flex-row">
+                                <div class="available-bed">
+                                    <h5>Available</h5>
+                                    <p id="available-word-bed">&nbsp;</p>
+                                </div>
+                                <div class="waiting-bed">
+                                    <h5>Waiting</h5>
+                                    <p id="waiting-word-bed">&nbsp;</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="icu-bed">
+                            <h4>icu beds</h4>
+                            <div class="parent-inner d-flex flex-row">
+                                <div class="available-bed">
+                                    <h5>Available</h5>
+                                    <p id="available-icu-bed">&nbsp;</p>
+                                </div>
+                                <div class="waiting-bed">
+                                    <h5>Waiting</h5>
+                                    <p id="waiting-icu-bed">&nbsp;</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                     <div class="parent-form" id="add-patient-id">
                         <div class="add-patient-form-cls">
                             <div class="row">
@@ -249,7 +271,15 @@
                                     <input type="date" class="form-control" id="dob" placeholder="DOB" required>
                                     <div class="invalid-feedback" id="dob_err_id">
                                     </div>
-                                    <div class="invalid-feedback" id="gender_err_id"></div>
+                                    <div class="invalid-feedback" id="dob_err_id"></div>
+                                </div>
+
+                                <div class="form-floating col-md-12">
+                                    <select name="bed-type" class="right-drop-down mt-2" id="bed">
+                                        <option selected="selected" value="">Bed type*</option>
+                                        <option value="word">Word</option>
+                                        <option value="icu">ICU</option>
+                                    </select>
                                 </div>
 
                                 <div class="col-md-12">
@@ -260,20 +290,11 @@
                     </div>
 
                 </main>
-                <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2020</div>
-                            <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
             </div>
         </div>
+
+        {{ hospital.slug|json_script:"hospital_slug" }}
+
         <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="{% static 'vendor/js/scripts.js' %}"></script>

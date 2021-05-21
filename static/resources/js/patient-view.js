@@ -11,6 +11,7 @@ function set_patient_details() {
     document.getElementById('status').value = patient['status'];
     document.getElementById('adhar').value = patient['adhar'];
     document.getElementById('dob').value = patient['dob'];
+    document.getElementById('bed').value = patient['bed'];
 
     change_fields_mode(true);
 }
@@ -32,6 +33,7 @@ function change_fields_mode(ack) {
     document.getElementById('status').disabled = ack;
     document.getElementById('adhar').disabled = ack;
     document.getElementById('dob').disabled = ack;
+    document.getElementById('bed').disabled = ack;
 }
 
 function update_patient_details() {
@@ -42,6 +44,7 @@ function update_patient_details() {
     status = document.getElementById('status').value;
     adhar = document.getElementById('adhar').value;
     dob = document.getElementById('dob').value;
+    bed = document.getElementById('bed').value;
 
     let csrfToken = $("input[name=csrfmiddlewaretoken").val();
     const patient = JSON.parse(document.getElementById('patient').textContent);
@@ -57,6 +60,7 @@ function update_patient_details() {
             'adhar': adhar,
             'dob': dob,
             'status': status,
+            'bed': bed,
             'slug': patient['slug'],
             csrfmiddlewaretoken: csrfToken
         },

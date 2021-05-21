@@ -29,6 +29,11 @@ class Patient(models.Model):
     status                          = models.CharField(max_length=20, choices=STATUS_CHOICE, default='Alive')
     adhar                           = models.CharField(max_length=50, unique=True)
     dob                             = models.DateField()
+    BED_CHOICE                      = (
+                                            ('word', 'Word'),
+                                            ('icu', 'ICU')
+                                        )
+    bed                             = models.CharField(max_length=20, choices=BED_CHOICE, default='Word')
     created_at                      = models.DateTimeField(default=timezone.now)
     update_at                       = models.DateTimeField(auto_now=True)
 

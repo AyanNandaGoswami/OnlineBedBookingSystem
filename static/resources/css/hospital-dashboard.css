@@ -89,8 +89,8 @@ html {
 #add-btn {
     width: 100%;
     margin: 40px auto 10px auto;
-    background-color: #dc3545;
-    border: 1px solid #dc3545;
+    background-color: #d6370c;
+    border: 1px solid #d6370c;
     text-transform: uppercase;
     border-radius: 25px;
     padding: 10px 0px;
@@ -145,6 +145,9 @@ html {
     cursor: pointer;
     margin: 0px 20px;
     vertical-align: middle;
+    
+    margin-top: 7px;
+
 }
 
 .icon span {
@@ -217,4 +220,87 @@ html {
 .my-btn {
     font-size: 12px;
 }
+
+.modal-dialog {
+    position: relative;
+    width: auto;
+    height: 500px;
+    /* margin: 0.5rem; */
+    pointer-events: none;
+    top: 200px !important;
+}
+
+/* beds */
+.bed-details-header {
+    margin-top: 50px;
+    margin-bottom: 0px;
+    font-size: 30px;
+    text-align: center;
+    border-bottom: 2px solid #aaa;
+    width: 30%;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 10px;
+}
+
+.beds {
+    margin-top: 50px;
+}
+
+.word-bed {
+    border: 1px solid #aaa;
+    margin-right: 50px;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 30px 30px;
+    background-color: rgb(243, 242, 242);
+}
+
+.word-bed h4 {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.available-bed {
+    margin-right: 30px;
+}
+
+.available-bed h5 {
+    margin-bottom: 0px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid green;
+    color: #555;
+    font-size: 17px;
+}
+
+.available-bed p {
+    margin-top: 7px;
+}
+
+.waiting-bed h5 {
+    margin-bottom: 0px;
+    padding-bottom: 5px;
+    color: #555;
+    font-size: 17px;
+    border-bottom: 1px solid orange;
+}
+
+.waiting-bed p {
+    margin-top: 7px;
+}
+
+.icu-bed {
+    border: 1px solid #555;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 30px 30px;
+    background-color: rgb(243, 242, 242);
+    border: 1px solid #aaa;
+}
+
+.icu-bed h4 {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
 

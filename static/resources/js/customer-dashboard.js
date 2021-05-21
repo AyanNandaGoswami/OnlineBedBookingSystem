@@ -51,7 +51,7 @@ function get_patients(slug) {
 
                 for(i=0; i<data.length; i++) {
                     table.row.add( {
-                        [0]:    "<a href=\"" + data[i]['slug'] + "\">" + data[i]['name'] + "</a>",
+                        [0]:    "<a href=\"/hospital/get-patient-info/" + data[i]['slug'] + "\">" + data[i]['name'] + "</a>",
                         [1]:    data[i]['adhar'],
                         [2]:    data[i]['status'],
                         [3]:    new Date(data[i]['created_at'])
@@ -103,5 +103,23 @@ function add_patient() {
 }
 
 
+function search_hospitals() {
+    var query_text = document.getElementById('search-field').value;
+    var url = '/customer/search-hospitals?search=' + query_text;
 
-
+    $.ajax({
+        type: 'GET',
+        url: url,
+        dataType: 'json',
+        
+        success: function (res) {
+            var data = res;
+            var body = document.getElementById('model-id');
+            var content = data.map(item => 
+                "<div class=\"content\"><p id=\"name-id\"><a href=\"/hospital/" + item.slug + "\">" + item.name + "</a></p><p id=\"address-id\">" + item.address + "</p></div>"
+                );
+            
+            body.innerHTML = content;
+        }
+    });
+}
