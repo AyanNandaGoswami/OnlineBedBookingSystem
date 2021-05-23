@@ -33,6 +33,16 @@ class CustomerRegisterAPI(GenericAPIView):
             return Response(user_serializer.errors)
 
 
+class CustomerLoginAPI(GenericAPIView):
+    def post(self, request):
+        data = request.data
+        user = authenticate(username=data['username'], password=data['password'])
+        if user:
+            login(request, user)
+            return Response({'login': True})
+        return Response({'error': 'Incorrect login credentials.', 'login': False})
+
+
 class CustomerLogoutAPIView(GenericAPIView):
 
     def get(self, request):

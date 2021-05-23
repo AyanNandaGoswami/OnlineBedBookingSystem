@@ -108,9 +108,10 @@ function disable_or_enable_bed_type(res) {
     }
 
     if (icu_availbale < 1 && word_available < 1) {
-        document.getElementById('open-model-btn').disabled = true;
+        document.getElementById('add-btn').disabled = true;
+    } else {
+        document.getElementById('add-btn').disabled = false;
     }
-
 }
 
 

@@ -3,6 +3,7 @@ from django.views import View
 
 from .models import *
 from bookpatient.models import Notification
+from customer.views import logged_in as user_logged_in
 
 
 def logged_in(request):
@@ -60,10 +61,13 @@ class HospitalDetailView(View):
 
         if self.get_object(slug) != None:
             hospital = self.get_object(slug)
-            
-            return render(request, self.template_name, {
-                'hospital': hospital,
-            })
+
+            if user_logged_in(request):                
+                return render(request, self.template_name, {
+                    'hospital': hospital,
+                })
+            else:
+                return redirect('customer:customer_login')
         else:
             return render(request, self.page_not_found, {'info': 'Invalid hospital slug'})
 

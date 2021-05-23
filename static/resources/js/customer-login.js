@@ -56,20 +56,15 @@ function register() {
 }
 
 
-
 function login() {
     var username = document.getElementById('username').value;
     var password = document.getElementById('password').value;
 
     let csrfToken = $("input[name=csrfmiddlewaretoken").val();
 
-    if(fields_are_not_null() == false) {
-        return false;
-    }
-
     $.ajax({
         type: 'POST',
-        url: '/account/user-login/',
+        url: '/customer/customer-login/',
         data: {
             'username': username,
             'password': password,
@@ -78,19 +73,16 @@ function login() {
         dataType: 'json', 
         
         success: function (res, status) {
-            if(res.is_authenticated==true){
-                var url = '/profile';
+            var login_status = false;
+            login_status = res['login'];
+            if(login_status == true) {
+                var url = '/customer/dashboard';
                 document.location.href = url;
             } else {
-                // cleanForm();
-                document.getElementById('username').classList.add('is-invalid');
-                document.getElementById('password').classList.add('is-invalid');
-                document.getElementById('error-msg').innerHTML = 'Invalid login credentials.';
-                setTimeout(function() {
-                    document.getElementById('error-msg').innerHTML = '';    
-                }, 3000);
+                document.getElementById('sign-inerror-msg').innerHTML = res['error'];
             }
         }
     });
     
 }
+
